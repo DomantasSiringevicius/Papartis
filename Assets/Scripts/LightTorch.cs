@@ -11,18 +11,13 @@ public class LightTorch : MonoBehaviour
         Fire.SetActive(false);
     }
 
-    private void OnTriggerEnter(Collider other)
+    void OnTriggerEnter(Collider other)
     {
-        if(isLit)
-        {
-            return;
-        }
         if (other.GetComponent<FireSource>() == null)
         {
             return;
         }
 
-        isLit = true;
         Fire.SetActive(true);
     }
 }
