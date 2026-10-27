@@ -47,6 +47,7 @@ namespace MimicSpace
         public float newLegCooldown = 0.3f;
 
         bool canCreateLeg = true;
+        bool warnedMissingGround;
 
         List<GameObject> availableLegPool = new List<GameObject>();
 
@@ -65,10 +66,12 @@ namespace MimicSpace
 
         private void ResetMimic()
         {
-            foreach (Leg g in GameObject.FindObjectsOfType<Leg>())
+            foreach (Leg g in GetComponentsInChildren<Leg>(true))
             {
                 Destroy(g.gameObject);
             }
+            availableLegPool.Clear();
+            canCreateLeg = true;
             legCount = 0;
             deployedLegs = 0;
 
@@ -78,7 +81,22 @@ namespace MimicSpace
             velocity = new Vector3(randV.x, 0, randV.y);
             minimumAnchoredParts = minimumAnchoredLegs * partsPerLeg;
             maxLegDistance = newLegRadius * 2.1f;
+        }
 
+        public void ResetForCrossing()
+        {
+            foreach (Leg leg in GetComponentsInChildren<Leg>(true))
+            {
+                leg.ResetForReuse();
+                leg.gameObject.SetActive(false);
+                if (!availableLegPool.Contains(leg.gameObject))
+                    availableLegPool.Add(leg.gameObject);
+            }
+
+            legCount = 0;
+            deployedLegs = 0;
+            legPlacerOrigin = transform.position;
+            canCreateLeg = true;
         }
 
         IEnumerator NewLegCooldown()
@@ -91,6 +109,13 @@ namespace MimicSpace
         // Update is called once per frame
         void Update()
         {
+            if (!legPrefab)
+            {
+                Debug.LogError($"{name} cannot generate legs because Leg Prefab is not assigned.", this);
+                enabled = false;
+                return;
+            }
+
             if (!canCreateLeg)
                 return;
 
@@ -122,11 +147,38 @@ namespace MimicSpace
                 if (Vector3.Angle(velocity, newLegPosition - transform.position) > 45)
                     newLegPosition = transform.position + ((newLegPosition - transform.position) + velocity.normalized * (newLegPosition - transform.position).magnitude) / 2f;
 
-                RaycastHit hit;
-                Physics.Raycast(newLegPosition + Vector3.up * 10f, -Vector3.up, out hit);
-                Vector3 myHit = hit.point;
-                if (Physics.Linecast(transform.position, hit.point, out hit))
+                Vector3 myHit = newLegPosition;
+                if (Physics.Raycast(
+                    newLegPosition + Vector3.up * 10f,
+                    Vector3.down,
+                    out RaycastHit hit,
+                    20f,
+                    Physics.DefaultRaycastLayers,
+                    QueryTriggerInteraction.Ignore))
+                {
                     myHit = hit.point;
+                }
+                else
+                {
+                    myHit.y = transform.position.y - 0.8f;
+                    if (!warnedMissingGround)
+                    {
+                        Debug.LogWarning(
+                            $"{name} could not raycast a ground position for a leg. Using its current height.",
+                            this);
+                        warnedMissingGround = true;
+                    }
+                }
+
+                if (Physics.Linecast(
+                    transform.position,
+                    myHit,
+                    out hit,
+                    Physics.DefaultRaycastLayers,
+                    QueryTriggerInteraction.Ignore))
+                {
+                    myHit = hit.point;
+                }
 
                 float lifeTime = Random.Range(minLegLifetime, maxLegLifetime);
 
@@ -151,11 +203,20 @@ namespace MimicSpace
             }
             else
             {
-                newLeg = Instantiate(legPrefab, transform.position, Quaternion.identity);
+                newLeg = Instantiate(legPrefab, transform.position, Quaternion.identity, transform);
             }
+
+            Leg leg = newLeg.GetComponent<Leg>();
+            if (!leg)
+            {
+                Debug.LogError($"{legPrefab.name} must have a Leg component.", legPrefab);
+                Destroy(newLeg);
+                return;
+            }
+
             newLeg.SetActive(true);
-            newLeg.GetComponent<Leg>().Initialize(footPosition, legResolution, maxLegDistance, growCoef, myMimic, lifeTime);
-            newLeg.transform.SetParent(myMimic.transform);
+            newLeg.transform.SetParent(myMimic.transform, true);
+            leg.Initialize(footPosition, legResolution, maxLegDistance, growCoef, myMimic, lifeTime);
         }
 
         public void RecycleLeg(GameObject leg)
