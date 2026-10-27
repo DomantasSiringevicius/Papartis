@@ -1,8 +1,8 @@
 using System;
 using Unity.Behavior;
 using UnityEngine;
-using Action = Unity.Behavior.Action;
 using Unity.Properties;
+using Action = Unity.Behavior.Action;
 
 [Serializable, GeneratePropertyBag]
 [NodeDescription(name: "Choose Crossing", story: "Position [Character] in front of [Player] toward [Destination]", category: "Action", id: "a7a1b315db7186d6b2f6ce196deae0c6")]
@@ -11,15 +11,14 @@ public partial class ChooseCrossingAction : Action
     [SerializeReference] public BlackboardVariable<GameObject> Character;
     [SerializeReference] public BlackboardVariable<GameObject> Player;
     [SerializeReference] public BlackboardVariable<Vector3> Destination;
-
     protected override Status OnStart()
     {
         if (Character == null || Player == null || Destination == null ||
             !Character.Value || !Player.Value)
             return Status.Failure;
 
-        float minDistance = 8f;
-        float maxDistance = 12f;
+        float minDistance = 20f;
+        float maxDistance = 30f;
 
         float halfWidth = 6f;
 

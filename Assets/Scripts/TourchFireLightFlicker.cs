@@ -3,65 +3,82 @@ using UnityEngine;
 [RequireComponent(typeof(Light))]
 public class TorchFireLightFlicker : MonoBehaviour
 {
-    [SerializeField] float m_MinIntensity = 6f;
-    [SerializeField] float m_MaxIntensity = 12f;
-    [SerializeField] float m_Speed = 6f;
-    [SerializeField] float m_BurnDuration = 60f;
+    [SerializeField] float burnDuration = 60f;
+    [SerializeField] float minimumLight = 6f;
+    [SerializeField] float maximumLight = 12f;
+    [SerializeField] float flickerSpeed = 6f;
 
-    Light m_Light;
-    ParticleSystem m_FireParticles;
+    public bool IsLit = false;
+    public float SecondsLeft = 0f;
 
-    Vector3 m_StartScale;
-    float m_Timer;
-    float m_NoiseOffset;
+    Light fireLight;
+    ParticleSystem fireParticles;
+    Vector3 startingScale;
+    float timer;
+    float randomOffset;
 
     void Awake()
     {
-        m_Light = GetComponent<Light>();
-        m_FireParticles = GetComponentInParent<ParticleSystem>();
-        m_StartScale = m_FireParticles.transform.localScale;
-        m_NoiseOffset = Random.value * 100f;
+        fireLight = GetComponent<Light>();
+        fireParticles = GetComponentInParent<ParticleSystem>();
+
+        startingScale = fireParticles.transform.localScale;
+        randomOffset = Random.value * 100f;
     }
 
     void OnEnable()
     {
-        m_Timer = 0f;
-        m_Light.enabled = true;
-        m_FireParticles.transform.localScale = m_StartScale;
-        m_FireParticles.Play();
+        timer = 0f;
+        SecondsLeft = burnDuration;
+        IsLit = true;
+
+        fireLight.enabled = true;
+        fireParticles.transform.localScale = startingScale;
+        fireParticles.Play();
+    }
+
+    void OnDisable()
+    {
+        IsLit = false;
+        SecondsLeft = 0f;
     }
 
     void Update()
     {
-        m_Timer += Time.deltaTime;
+        timer += Time.deltaTime;
+        SecondsLeft = burnDuration - timer;
 
-        if (m_Timer >= m_BurnDuration)
+        if (SecondsLeft <= 0f)
         {
-            m_Light.intensity = 0f;
-            m_FireParticles.Stop();
-            m_FireParticles.gameObject.SetActive(false);
+            SecondsLeft = 0f;
+            IsLit = false;
+
+            fireLight.intensity = 0f;
+            fireParticles.Stop();
+            fireParticles.gameObject.SetActive(false);
+
             return;
         }
 
-        float progress = m_Timer / m_BurnDuration;
-
-        float noise = Mathf.PerlinNoise(
-            m_NoiseOffset,
-            Time.time * m_Speed
+        float flicker = Mathf.PerlinNoise(
+            randomOffset,
+            Time.time * flickerSpeed
         );
 
-        float flicker = Mathf.Lerp(
-            m_MinIntensity,
-            m_MaxIntensity,
-            noise
+        float lightAmount = Mathf.Lerp(
+            minimumLight,
+            maximumLight,
+            flicker
         );
 
-        m_Light.intensity = flicker * (1f - progress);
+        float fadeAmount = SecondsLeft / burnDuration;
 
-        m_FireParticles.transform.localScale = Vector3.Lerp(
-            m_StartScale,
+        fireLight.intensity = lightAmount * fadeAmount;
+
+        fireParticles.transform.localScale = Vector3.Lerp(
             Vector3.zero,
-            progress
+            startingScale,
+            fadeAmount
         );
     }
 }

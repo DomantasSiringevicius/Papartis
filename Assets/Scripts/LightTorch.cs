@@ -9,13 +9,16 @@ public class LightTorch : MonoBehaviour
         Fire.SetActive(false);
     }
 
-    void OnTriggerEnter(Collider other)
+    void OnTriggerStay(Collider other)
     {
-        if (other.GetComponent<FireSource>() == null)
+        if (other.GetComponentInParent<FireSource>() == null)
         {
             return;
         }
 
-        Fire.SetActive(true);
+        if (!Fire.activeSelf)
+        {
+            Fire.SetActive(true);
+        }
     }
 }
