@@ -8787,9 +8787,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3507ead1d97d61549913b999e3de09b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  burnDuration: 60
-  minimumLight: 6
-  maximumLight: 12
+  burnDuration: 20
+  minimumLight: 4
+  maximumLight: 20
   flickerSpeed: 6
   IsLit: 0
   SecondsLeft: 0
