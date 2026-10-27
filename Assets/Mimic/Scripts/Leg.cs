@@ -46,6 +46,18 @@ namespace MimicSpace
 
         public Color myColor;
 
+        public void ResetForReuse()
+        {
+            StopAllCoroutines();
+            isDeployed = false;
+            isRemoved = false;
+            growTarget = 1;
+            progression = 0f;
+            legLine = GetComponent<LineRenderer>();
+            if (legLine)
+                legLine.positionCount = 0;
+        }
+
         public void Initialize(Vector3 footPosition, int legResolution, float maxLegDistance, float growCoef, Mimic myMimic, float lifeTime)
         {
             myColor = new Color(Random.Range(0, 1f), Random.Range(0, 1f), Random.Range(0, 1f));
@@ -56,6 +68,12 @@ namespace MimicSpace
             this.myMimic = myMimic;
 
             this.legLine = GetComponent<LineRenderer>();
+            if (!legLine)
+            {
+                Debug.LogError($"{name} cannot render because LineRenderer is missing.", this);
+                return;
+            }
+
             handles = new Vector3[handlesCount];
 
             // We initialize a bunch of random offsets for many aspects of the legs so every leg part is unique
@@ -72,8 +90,19 @@ namespace MimicSpace
             // is a bit offset for every leg part
             Vector2 footOffset = Random.insideUnitCircle.normalized * finalFootDistance;
             RaycastHit hit;
-            Physics.Raycast(footPosition + Vector3.up * 5f + new Vector3(footOffset.x, 0, footOffset.y), -Vector3.up, out hit);
-            handles[7] = hit.point;
+            Vector3 finalFootPosition = footPosition + new Vector3(footOffset.x, 0, footOffset.y);
+            if (Physics.Raycast(
+                finalFootPosition + Vector3.up * 5f,
+                Vector3.down,
+                out hit,
+                20f,
+                Physics.DefaultRaycastLayers,
+                QueryTriggerInteraction.Ignore))
+            {
+                finalFootPosition = hit.point;
+            }
+
+            handles[7] = finalFootPosition;
 
             legHeight = Random.Range(legMinHeight, legMaxHeight);
             rotationSpeed = Random.Range(minRotSpeed, maxRotSpeed); // * (Random.Range(0f, 1f) > 0.5f ? -1 : 1);
@@ -111,15 +140,6 @@ namespace MimicSpace
             // The growTarget is set to 1 if the leg must grow, and 0 if it must retract
             if (growTarget == 1 && Vector3.Distance(new Vector3(myMimic.legPlacerOrigin.x, 0, myMimic.legPlacerOrigin.z), new Vector3(footPosition.x, 0, footPosition.z)) > maxLegDistance && canDie && myMimic.deployedLegs > myMimic.minimumAnchoredParts)
                 growTarget = 0;
-            else if (growTarget == 1)
-            {
-                // Check is the body is in line of sight from the foot position, and initiates the retractation if it isn't
-                RaycastHit hit;
-                if (Physics.Linecast(footPosition, transform.position, out hit))
-                {
-                    growTarget = 0;
-                }
-            }
             // progression defines the percentage of deployement (1 being fully deployed and 0 fully retracted)
             progression = Mathf.Lerp(progression, growTarget, growCoef * Time.deltaTime);
 
