@@ -54,17 +54,29 @@ public partial class ChooseCrossingAction : Action
             Quaternion.LookRotation(end - start));
 
         Destination.Value = endHit.point + Vector3.up;
+        MimicSpace.Movement movement = Character.Value.GetComponent<MimicSpace.Movement>();
+        if (!movement)
+            return Status.Failure;
 
-        return Status.Success;
+        Character.Value.SetActive(true);
+        movement.SetDestination(Destination.Value);
+
+        return Status.Running;
     }
 
     protected override Status OnUpdate()
     {
-        return Status.Success;
+        if (!Character.Value)
+            return Status.Failure;
+
+        MimicSpace.Movement movement = Character.Value.GetComponent<MimicSpace.Movement>();
+        if (!movement)
+            return Status.Failure;
+
+        return movement.IsMoving ? Status.Running : Status.Success;
     }
 
     protected override void OnEnd()
     {
     }
 }
-
