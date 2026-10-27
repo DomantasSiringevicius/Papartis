@@ -569,7 +569,7 @@ MonoBehaviour:
   - {fileID: -9148024594728507871}
   - {fileID: 1667917345412260928}
   - {fileID: -8717505715155694145}
-  - {fileID: -2179117090327039640}
+  - {fileID: -6390657092470706739}
   - {fileID: 6481653220666705815}
   - {fileID: 7393116930172532905}
   - {fileID: 744375598501864353}
@@ -1169,8 +1169,8 @@ MonoBehaviour:
   features:
   - {fileID: 7011443450567333355}
   - {fileID: -671281728444007487}
-  - {fileID: 3303045458221040146}
-  - {fileID: 6522787810490465486}
+  - {fileID: -901939997048047619}
+  - {fileID: 9148282899788776258}
   - {fileID: 8980318060753866109}
   - {fileID: -6559185765804338520}
   - {fileID: -4756202077021157709}
@@ -1181,7 +1181,7 @@ MonoBehaviour:
   - {fileID: 348827886137839178}
   - {fileID: -7499073031166464939}
   - {fileID: 7666556398442971420}
-  - {fileID: -3370013923001419851}
+  - {fileID: 2607174980422250623}
   - {fileID: -4363231183632145407}
   - {fileID: -1214223305509136874}
   - {fileID: 7024391430695218602}
@@ -2556,7 +2556,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 90ae1e8c3c7a542bba339faf2e771c5a, type: 3}
-  m_Name: AndroidXRSupportFeature Standalone
+  m_Name: AndroidXRSupportFeature Android
   m_EditorClassIdentifier: 
   m_enabled: 0
   nameUi: Android XR Support

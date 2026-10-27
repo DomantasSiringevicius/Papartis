@@ -4,9 +4,7 @@ public class LightTorch : MonoBehaviour
 {
     [SerializeField] GameObject Fire;
 
-    bool isLit;
-
-    private void Awake()
+    void Awake()
     {
         Fire.SetActive(false);
     }
