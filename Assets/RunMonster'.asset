@@ -20,7 +20,6 @@ MonoBehaviour:
   - rid: 6874297617533632872
   - rid: 6874297617533632939
   - rid: 6874297617533632967
-  - rid: 6874297617533633008
   - rid: 6874297617533633093
   - rid: 6874297958075203671
   m_VersionTimestamp: 639287301951530888
@@ -351,7 +350,6 @@ MonoBehaviour:
         m_Connections:
         - rid: 6874297617533632940
         - rid: 6874297617533632968
-        - rid: 6874297617533633009
         - rid: 6874297617533633094
     - rid: 6874297617533632939
       type: {class: ActionNodeModel, ns: Unity.Behavior, asm: Unity.Behavior.Authoring}
