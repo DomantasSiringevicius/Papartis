@@ -8,6 +8,7 @@ namespace MimicSpace
     /// This is a very basic movement script, if you want to replace it
     /// Just don't forget to update the Mimic's velocity vector with a Vector3(x, 0, z)
     /// </summary>
+    [RequireComponent(typeof(AudioSource))]
     public class Movement : MonoBehaviour
     {
         [Tooltip("Body Height from ground")]
@@ -21,11 +22,15 @@ namespace MimicSpace
         private bool hasDestination;
         private Mimic myMimic;
         private Rigidbody body;
+        AudioSource movementAudioSource;
 
         private void Awake()
         {
             myMimic = GetComponent<Mimic>();
             body = GetComponent<Rigidbody>();
+            movementAudioSource = GetComponent<AudioSource>();
+            movementAudioSource.playOnAwake = false;
+            movementAudioSource.loop = true;
             if (body)
             {
                 body.isKinematic = true;
@@ -60,6 +65,7 @@ namespace MimicSpace
             {
                 velocity = Vector3.zero;
                 myMimic.velocity = velocity;
+                movementAudioSource.Stop();
                 return;
             }
 
@@ -77,8 +83,12 @@ namespace MimicSpace
                 velocity = Vector3.zero;
                 myMimic.velocity = velocity;
                 hasDestination = false;
+                movementAudioSource.Stop();
                 return;
             }
+
+            if (!movementAudioSource.isPlaying)
+                movementAudioSource.Play();
 
             direction /= remainingDistance;
             velocity = Vector3.Lerp(velocity, direction * speed, velocityLerpCoef * Time.deltaTime);
