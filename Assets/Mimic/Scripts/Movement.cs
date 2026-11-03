@@ -8,7 +8,6 @@ namespace MimicSpace
     /// This is a very basic movement script, if you want to replace it
     /// Just don't forget to update the Mimic's velocity vector with a Vector3(x, 0, z)
     /// </summary>
-    [RequireComponent(typeof(AudioSource))]
     public class Movement : MonoBehaviour
     {
         [Tooltip("Body Height from ground")]
