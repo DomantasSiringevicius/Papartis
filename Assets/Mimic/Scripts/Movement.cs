@@ -19,6 +19,7 @@ namespace MimicSpace
         private Vector3 velocity = Vector3.zero;
         private Vector3 destination;
         private bool hasDestination;
+        private Transform chaseTarget;
         private Mimic myMimic;
         private Rigidbody body;
         AudioSource movementAudioSource;
@@ -39,6 +40,9 @@ namespace MimicSpace
 
         public void SetDestination(Vector3 destination)
         {
+            if (chaseTarget)
+                return;
+
             if (!myMimic)
             {
                 Debug.LogError($"{name} cannot move because the Mimic component is missing.", this);
@@ -55,10 +59,35 @@ namespace MimicSpace
             get { return hasDestination; }
         }
 
+        public bool IsChasing
+        {
+            get { return chaseTarget != null; }
+        }
+
+        public void Chase(Transform target)
+        {
+            if (!myMimic)
+                return;
+
+            myMimic.ResetForCrossing();
+            chaseTarget = target;
+            destination = target.position;
+            hasDestination = true;
+        }
+
+        public void StopChase()
+        {
+            chaseTarget = null;
+            hasDestination = false;
+        }
+
         private void Update()
         {
             if (!myMimic)
                 return;
+
+            if (chaseTarget)
+                destination = chaseTarget.position;
 
             if (!hasDestination)
             {
@@ -72,7 +101,7 @@ namespace MimicSpace
             direction.y = 0f;
             float remainingDistance = direction.magnitude;
 
-            if (remainingDistance <= 0.05f)
+            if (remainingDistance <= 0.05f && !chaseTarget)
             {
                 Vector3 finalPosition = new Vector3(destination.x, transform.position.y, destination.z);
                 if (TryGetGroundPosition(finalPosition, out Vector3 finalGroundPosition))

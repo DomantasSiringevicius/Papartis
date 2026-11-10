@@ -12,7 +12,6 @@ public class FlowerAssembly : MonoBehaviour
     [Tooltip("Colliders used to pick up the finished flower.")]
     [SerializeField] Collider[] m_FlowerColliders;
     [SerializeField] XRGrabInteractable m_FlowerGrab;
-    [SerializeField] bool m_StartComplete = true;
 
     int m_PlacedCount;
 
@@ -25,17 +24,6 @@ public class FlowerAssembly : MonoBehaviour
         foreach (var flowerCollider in m_FlowerColliders)
             flowerCollider.enabled = false;
         m_FlowerGrab.enabled = false;
-
-        if (m_StartComplete)
-        {
-            for (var i = 0; i < m_Sockets.Length; i++)
-            {
-                m_Sockets[i].gameObject.SetActive(false);
-                m_PetalPlaces[i].enabled = true;
-            }
-            m_PlacedCount = m_Sockets.Length;
-            EnablePickUp();
-        }
     }
 
     void OnEnable()

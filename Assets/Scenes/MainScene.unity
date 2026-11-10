@@ -151,6 +151,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   openAngle: 90
   openSpeed: 4
+  unlockZonePadding: 1.5
 --- !u!114 &4633287
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -537,6 +538,7 @@ MonoBehaviour:
   - {fileID: 1725184733}
   - {fileID: 1941908147}
   m_FlowerGrab: {fileID: 89046865}
+  m_StartComplete: 1
 --- !u!114 &89046865
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -29052,6 +29054,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2098257544}
   - component: {fileID: 2098257543}
+  - component: {fileID: 2098257545}
   m_Layer: 0
   m_Name: MonsterController
   m_TagString: Untagged
@@ -29130,6 +29133,26 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2098257545
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2098257542}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 570a5970d17cddf4b89a71ab2d656405, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  huntSpeed: 7
+  spawnDistance: 15
+  killDistance: 1.2
+  gameOverScene: Opening screen
+  scream: {fileID: 8300000, guid: 52d65439bc8fb6c4e96962549171968f, type: 3}
+  fadeMaterial: {fileID: 2100000, guid: e42abe4726c6efc4da9e5aca7b8a7c4f, type: 2}
+  fadeDuration: 1.5
+  blackScreenTime: 2
 --- !u!1001 &2101697420
 PrefabInstance:
   m_ObjectHideFlags: 0
