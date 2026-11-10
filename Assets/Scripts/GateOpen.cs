@@ -8,6 +8,7 @@ public class GateOpen : MonoBehaviour
 {
     [SerializeField] float openAngle = 90f;
     [SerializeField] float openSpeed = 4f;
+    [SerializeField] float unlockZonePadding = 1.5f;
 
     XRSimpleInteractable interactable;
     Transform hand;
@@ -16,6 +17,7 @@ public class GateOpen : MonoBehaviour
     float gateStartAngle;
     float targetAngle;
     bool pulling;
+    bool unlocked;
 
     void Awake()
     {
@@ -24,6 +26,30 @@ public class GateOpen : MonoBehaviour
         interactable.selectExited.AddListener(OnRelease);
 
         closedRotation = transform.localRotation;
+        CreateUnlockZone();
+    }
+
+    void CreateUnlockZone()
+    {
+        Renderer[] renderers = GetComponentsInChildren<Renderer>();
+        if (renderers.Length == 0)
+            return;
+
+        Bounds bounds = renderers[0].bounds;
+        foreach (Renderer gateRenderer in renderers)
+            bounds.Encapsulate(gateRenderer.bounds);
+
+        GameObject zone = new GameObject("Gate Unlock Zone");
+        zone.transform.position = bounds.center;
+        BoxCollider box = zone.AddComponent<BoxCollider>();
+        box.isTrigger = true;
+        box.size = bounds.size + Vector3.one * unlockZonePadding * 2f;
+        zone.AddComponent<GateUnlockZone>().Gate = this;
+    }
+
+    public void Unlock()
+    {
+        unlocked = true;
     }
 
     void OnDestroy()
@@ -34,7 +60,7 @@ public class GateOpen : MonoBehaviour
 
     void OnGrab(SelectEnterEventArgs args)
     {
-        if (args.interactorObject.handedness != InteractorHandedness.Right)
+        if (!unlocked || args.interactorObject.handedness != InteractorHandedness.Right)
             return;
 
         hand = args.interactorObject.GetAttachTransform(interactable);
