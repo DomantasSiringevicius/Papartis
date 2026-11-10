@@ -6,17 +6,18 @@ using UnityEngine.XR.Interaction.Toolkit.Interactors;
 [RequireComponent(typeof(XRSimpleInteractable))]
 public class GateOpen : MonoBehaviour
 {
-    [SerializeField] float pushDistance = 0.5f;
     [SerializeField] float openAngle = 90f;
     [SerializeField] float openSpeed = 4f;
+    [SerializeField] float unlockZonePadding = 1.5f;
 
     XRSimpleInteractable interactable;
     Transform hand;
-    Vector3 handStart;
-    Vector3 doorNormal;
     Quaternion closedRotation;
-    float openAmount;
+    float handStartAngle;
+    float gateStartAngle;
+    float targetAngle;
     bool pulling;
+    bool unlocked;
 
     void Awake()
     {
@@ -25,6 +26,30 @@ public class GateOpen : MonoBehaviour
         interactable.selectExited.AddListener(OnRelease);
 
         closedRotation = transform.localRotation;
+        CreateUnlockZone();
+    }
+
+    void CreateUnlockZone()
+    {
+        Renderer[] renderers = GetComponentsInChildren<Renderer>();
+        if (renderers.Length == 0)
+            return;
+
+        Bounds bounds = renderers[0].bounds;
+        foreach (Renderer gateRenderer in renderers)
+            bounds.Encapsulate(gateRenderer.bounds);
+
+        GameObject zone = new GameObject("Gate Unlock Zone");
+        zone.transform.position = bounds.center;
+        BoxCollider box = zone.AddComponent<BoxCollider>();
+        box.isTrigger = true;
+        box.size = bounds.size + Vector3.one * unlockZonePadding * 2f;
+        zone.AddComponent<GateUnlockZone>().Gate = this;
+    }
+
+    public void Unlock()
+    {
+        unlocked = true;
     }
 
     void OnDestroy()
@@ -35,12 +60,12 @@ public class GateOpen : MonoBehaviour
 
     void OnGrab(SelectEnterEventArgs args)
     {
-        if (args.interactorObject.handedness != InteractorHandedness.Right)
+        if (!unlocked || args.interactorObject.handedness != InteractorHandedness.Right)
             return;
 
         hand = args.interactorObject.GetAttachTransform(interactable);
-        handStart = hand.position;
-        doorNormal = transform.forward;
+        handStartAngle = HandAngle();
+        gateStartAngle = targetAngle;
         pulling = true;
     }
 
@@ -53,17 +78,22 @@ public class GateOpen : MonoBehaviour
         }
     }
 
+    float HandAngle()
+    {
+        Quaternion parentRotation = transform.parent != null ? transform.parent.rotation : Quaternion.identity;
+        Vector3 offset = Quaternion.Inverse(parentRotation * closedRotation) * (hand.position - transform.position);
+        return Mathf.Atan2(offset.x, offset.z) * Mathf.Rad2Deg;
+    }
+
     void Update()
     {
         if (pulling && hand != null)
         {
-            float push = -Vector3.Dot(hand.position - handStart, doorNormal);
-            openAmount = Mathf.Clamp01(push / pushDistance);
+            float turned = Mathf.DeltaAngle(handStartAngle, HandAngle());
+            targetAngle = Mathf.Clamp(gateStartAngle + turned, -openAngle, openAngle);
         }
 
-        Quaternion openRotation =
-            closedRotation * Quaternion.Euler(0f, openAngle, 0f);
-        Quaternion target = Quaternion.Slerp(closedRotation, openRotation, openAmount);
+        Quaternion target = closedRotation * Quaternion.Euler(0f, targetAngle, 0f);
 
         transform.localRotation = Quaternion.Slerp(
             transform.localRotation, target, openSpeed * Time.deltaTime);

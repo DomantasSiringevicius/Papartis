@@ -9,8 +9,15 @@ using Action = Unity.Behavior.Action;
 public partial class WaitForTorchEndAction : Action
 {
     [SerializeReference] public BlackboardVariable<GameObject> Torch;
-    
-     private bool alreadyTriggered;
+    [SerializeReference] public BlackboardVariable<float> PauseSeconds = new BlackboardVariable<float>(4f);
+
+    private float startTime;
+
+    protected override Status OnStart()
+    {
+        startTime = Time.time;
+        return Status.Running;
+    }
 
     protected override Status OnUpdate()
     {
@@ -33,30 +40,16 @@ public partial class WaitForTorchEndAction : Action
             return Status.Failure;
         }
 
-        // The torch is out.
-        // Allow the monster to run again after the torch is relit.
-        if (!torchScript.IsLit)
-        {
-            alreadyTriggered = false;
-            return Status.Running;
-        }
-
-        // The torch has been relit with more than 10 seconds remaining.
-        if (torchScript.SecondsLeft > 10f)
-        {
-            alreadyTriggered = false;
-            return Status.Running;
-        }
-
-        // Prevent the monster from running repeatedly
-        // while the torch remains under 10 seconds.
-        if (alreadyTriggered)
+        if (!torchScript.IsLit || torchScript.SecondsLeft > 10f)
         {
             return Status.Running;
         }
 
-        // Torch has 10 seconds or less remaining.
-        alreadyTriggered = true;
+        if (Time.time - startTime < PauseSeconds.Value)
+        {
+            return Status.Running;
+        }
+
         return Status.Success;
     }
 }

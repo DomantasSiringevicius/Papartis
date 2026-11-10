@@ -57,11 +57,14 @@ public class FlowerAssembly : MonoBehaviour
         m_PlacedCount++;
 
         if (IsComplete)
-        {
-            foreach (var flowerCollider in m_FlowerColliders)
-                flowerCollider.enabled = true;
-            m_FlowerGrab.enabled = true;
-        }
+            EnablePickUp();
+    }
+
+    void EnablePickUp()
+    {
+        foreach (var flowerCollider in m_FlowerColliders)
+            flowerCollider.enabled = true;
+        m_FlowerGrab.enabled = true;
     }
 
     void OnFlowerReleased(SelectExitEventArgs args)
