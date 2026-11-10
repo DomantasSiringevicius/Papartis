@@ -6,16 +6,15 @@ using UnityEngine.XR.Interaction.Toolkit.Interactors;
 [RequireComponent(typeof(XRSimpleInteractable))]
 public class GateOpen : MonoBehaviour
 {
-    [SerializeField] float pushDistance = 0.5f;
     [SerializeField] float openAngle = 90f;
     [SerializeField] float openSpeed = 4f;
 
     XRSimpleInteractable interactable;
     Transform hand;
-    Vector3 handStart;
-    Vector3 doorNormal;
     Quaternion closedRotation;
-    float openAmount;
+    float handStartAngle;
+    float gateStartAngle;
+    float targetAngle;
     bool pulling;
 
     void Awake()
@@ -39,8 +38,8 @@ public class GateOpen : MonoBehaviour
             return;
 
         hand = args.interactorObject.GetAttachTransform(interactable);
-        handStart = hand.position;
-        doorNormal = transform.forward;
+        handStartAngle = HandAngle();
+        gateStartAngle = targetAngle;
         pulling = true;
     }
 
@@ -53,17 +52,22 @@ public class GateOpen : MonoBehaviour
         }
     }
 
+    float HandAngle()
+    {
+        Quaternion parentRotation = transform.parent != null ? transform.parent.rotation : Quaternion.identity;
+        Vector3 offset = Quaternion.Inverse(parentRotation * closedRotation) * (hand.position - transform.position);
+        return Mathf.Atan2(offset.x, offset.z) * Mathf.Rad2Deg;
+    }
+
     void Update()
     {
         if (pulling && hand != null)
         {
-            float push = -Vector3.Dot(hand.position - handStart, doorNormal);
-            openAmount = Mathf.Clamp01(push / pushDistance);
+            float turned = Mathf.DeltaAngle(handStartAngle, HandAngle());
+            targetAngle = Mathf.Clamp(gateStartAngle + turned, -openAngle, openAngle);
         }
 
-        Quaternion openRotation =
-            closedRotation * Quaternion.Euler(0f, openAngle, 0f);
-        Quaternion target = Quaternion.Slerp(closedRotation, openRotation, openAmount);
+        Quaternion target = closedRotation * Quaternion.Euler(0f, targetAngle, 0f);
 
         transform.localRotation = Quaternion.Slerp(
             transform.localRotation, target, openSpeed * Time.deltaTime);
