@@ -1,9 +1,11 @@
 using System.Collections;
+using System.Linq;
 using MimicSpace;
 using Unity.XR.CoreUtils;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.XR;
+using UnityEngine.XR.Interaction.Toolkit.Interactables;
 
 public class MonsterHunt : MonoBehaviour
 {
@@ -48,7 +50,8 @@ public class MonsterHunt : MonoBehaviour
             Debug.LogWarning($"{name} has no stun prompt assigned.", this);
 
         monster = FindFirstObjectByType<Movement>(FindObjectsInactive.Include);
-        torch = FindFirstObjectByType<TorchFireLightFlicker>(FindObjectsInactive.Include);
+        torch = FindObjectsByType<TorchFireLightFlicker>(FindObjectsInactive.Include, FindObjectsSortMode.None)
+            .FirstOrDefault(candidate => candidate.GetComponentInParent<XRGrabInteractable>(true) != null);
         if (Camera.main != null)
         {
             player = Camera.main.transform;
