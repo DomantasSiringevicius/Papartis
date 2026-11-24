@@ -9,6 +9,7 @@ public class GateOpen : MonoBehaviour
     [SerializeField] float openAngle = 90f;
     [SerializeField] float openSpeed = 4f;
     [SerializeField] float unlockZonePadding = 1.5f;
+    [SerializeField] bool unlockForTesting;
 
     XRSimpleInteractable interactable;
     Transform hand;
@@ -27,6 +28,8 @@ public class GateOpen : MonoBehaviour
 
         closedRotation = transform.localRotation;
         CreateUnlockZone();
+        if (unlockForTesting)
+            Unlock();
     }
 
     void CreateUnlockZone()

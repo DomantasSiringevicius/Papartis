@@ -152,6 +152,7 @@ MonoBehaviour:
   openAngle: 90
   openSpeed: 4
   unlockZonePadding: 1.5
+  unlockForTesting: 1
 --- !u!114 &4633287
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9396,8 +9397,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 644545095}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: 0.3289748, z: -0, w: 0.94433874}
-  m_LocalPosition: {x: 34.398327, y: -3.0254924, z: 32.478527}
+  m_LocalRotation: {x: -0, y: 0.7189086, z: -0, w: 0.6951046}
+  m_LocalPosition: {x: 3.98, y: -3.0254924, z: -1.17}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -9413,8 +9414,9 @@ Transform:
   - {fileID: 1556572812}
   - {fileID: 1999478458}
   - {fileID: 4633288}
+  - {fileID: 1025780459}
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 38.413, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 91.929, z: 0}
 --- !u!1001 &650396594
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -17350,6 +17352,54 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 611070339242345589, guid: 6905bfb07dfcac5489e6daf8e7babe92, type: 3}
   m_PrefabInstance: {fileID: 134453183}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1025780458
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1025780459}
+  - component: {fileID: 1025780460}
+  m_Layer: 0
+  m_Name: Ending Point
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1025780459
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1025780458}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0.3289748, z: 0, w: 0.94433874}
+  m_LocalPosition: {x: -4.32, y: 4.4054923, z: -1.085}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 644545096}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1025780460
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1025780458}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 993edf499dff24a4db75a1af8869b120, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gate: {fileID: 4633288}
+  requiredOpenAngle: 60
+  finishRadius: 1.5
+  endingDelay: 2
 --- !u!1 &1033802289
 GameObject:
   m_ObjectHideFlags: 0
