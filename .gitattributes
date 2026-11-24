@@ -2,6 +2,7 @@
 *.unity merge=unityyamlmerge eol=lf
 *.prefab merge=unityyamlmerge eol=lf
 *.asset merge=unityyamlmerge eol=lf
+Assets/Materials/Terrain/*.asset -text -merge -diff
 *.meta eol=lf
 
 # Git LFS
