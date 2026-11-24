@@ -147825,7 +147825,13 @@ MonoBehaviour:
   huntSpeed: 7
   spawnDistance: 15
   killDistance: 1.2
-  fireplace: {fileID: 560971299}
+  safeZones:
+  - {fileID: 560971299}
+  - {fileID: 507803940}
+  - {fileID: 930935608}
+  - {fileID: 1230128859}
+  - {fileID: 1754660276}
+  - {fileID: 1961014277}
   safeRadius: 4
   gameOverScene: Opening screen
   scream: {fileID: 8300000, guid: 52d65439bc8fb6c4e96962549171968f, type: 3}
