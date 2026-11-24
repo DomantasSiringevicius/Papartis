@@ -5,7 +5,7 @@ public class LightTorch : MonoBehaviour
 {
     [SerializeField] GameObject Fire;
     [SerializeField] AudioClip ignitionSound;
-    [SerializeField] float secondsToIgnite = 5f;
+    [SerializeField] float secondsToIgnite = 2f;
 
     private AudioSource audioSource;
     private int fireSourcesTouching;
