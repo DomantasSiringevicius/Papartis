@@ -8,6 +8,8 @@ public class MonsterHunt : MonoBehaviour
     [SerializeField] float huntSpeed = 7f;
     [SerializeField] float spawnDistance = 15f;
     [SerializeField] float killDistance = 1.2f;
+    [SerializeField] Transform fireplace;
+    [SerializeField, Min(0f)] float safeRadius = 4f;
     [SerializeField] string gameOverScene = "Opening screen";
     [SerializeField] AudioClip scream;
     [SerializeField] Material fadeMaterial;
@@ -43,6 +45,19 @@ public class MonsterHunt : MonoBehaviour
             if (hunting)
                 StopHunt();
             return;
+        }
+
+        if (fireplace != null)
+        {
+            Vector3 offset = player.position - fireplace.position;
+            offset.y = 0f; 
+
+            if (offset.sqrMagnitude <= safeRadius * safeRadius)
+            {
+                if (hunting)
+                StopHunt();
+                return;
+            }
         }
 
         if (!torchWasLit)
