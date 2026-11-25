@@ -24428,6 +24428,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8ea6769c115c9f841a7df2e330403985, type: 3}
+--- !u!1 &394119829 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4417878959092904028, guid: 77e7c27b2c5525e4aa8cc9f99d654486, type: 3}
+  m_PrefabInstance: {fileID: 1558684727}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &394252636
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -42508,6 +42513,10 @@ PrefabInstance:
     - target: {fileID: 8135023674665499069, guid: 58d0a4ac86f2348deb02f3880c71378e, type: 3}
       propertyPath: m_Name
       value: XR Interaction Simulator
+      objectReference: {fileID: 0}
+    - target: {fileID: 8135023674665499069, guid: 58d0a4ac86f2348deb02f3880c71378e, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8518324294302271954, guid: 58d0a4ac86f2348deb02f3880c71378e, type: 3}
       propertyPath: m_LocalPosition.x
@@ -147825,6 +147834,8 @@ MonoBehaviour:
   huntSpeed: 7
   spawnDistance: 15
   killDistance: 1.2
+  stunDuration: 5
+  handMovementThreshold: 0.5
   safeZones:
   - {fileID: 560971299}
   - {fileID: 507803940}
@@ -147838,6 +147849,7 @@ MonoBehaviour:
   fadeMaterial: {fileID: 2100000, guid: e42abe4726c6efc4da9e5aca7b8a7c4f, type: 2}
   fadeDuration: 1.5
   blackScreenTime: 2
+  stunPrompt: {fileID: 394119829}
 --- !u!1 &2100436360
 GameObject:
   m_ObjectHideFlags: 0

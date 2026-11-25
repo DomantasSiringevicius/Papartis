@@ -10,6 +10,7 @@ using UnityEngine.XR.Interaction.Toolkit.Interactables;
 public class MonsterHunt : MonoBehaviour
 {
     const float HuntCooldown = 10f;
+    const float StunTurnDuration = 0.4f;
 
     [SerializeField] float huntSpeed = 7f;
     [SerializeField] float spawnDistance = 15f;
@@ -41,6 +42,8 @@ public class MonsterHunt : MonoBehaviour
     bool hasLeftHandStartPosition;
     bool hasRightHandStartPosition;
     Vector3 stunOriginPosition;
+    float stunTurnAngle;
+    float stunTurnProgress;
 
     void Start()
     {
@@ -67,8 +70,18 @@ public class MonsterHunt : MonoBehaviour
 
     void LateUpdate()
     {
-        if (stunned && playerOrigin != null)
-            playerOrigin.position = stunOriginPosition;
+        if (!stunned || playerOrigin == null)
+            return;
+
+        playerOrigin.position = stunOriginPosition;
+        if (stunTurnProgress < 1f)
+        {
+            float previousTurn = Mathf.SmoothStep(0f, 1f, stunTurnProgress);
+            stunTurnProgress = Mathf.Min(1f, stunTurnProgress + Time.deltaTime / StunTurnDuration);
+            float currentTurn = Mathf.SmoothStep(0f, 1f, stunTurnProgress);
+            playerOrigin.RotateAround(player.position, Vector3.up, stunTurnAngle * (currentTurn - previousTurn));
+            stunOriginPosition = playerOrigin.position;
+        }
     }
 
     void Update()
@@ -130,7 +143,15 @@ public class MonsterHunt : MonoBehaviour
         stunTimer = 0f;
         nextHuntTime = Time.time + HuntCooldown;
         if (playerOrigin != null)
+        {
             stunOriginPosition = playerOrigin.position;
+            Vector3 lookDirection = Vector3.ProjectOnPlane(player.forward, Vector3.up);
+            Vector3 monsterDirection = Vector3.ProjectOnPlane(monster.transform.position - player.position, Vector3.up);
+            stunTurnAngle = lookDirection.sqrMagnitude > 0.0001f && monsterDirection.sqrMagnitude > 0.0001f
+                ? Vector3.SignedAngle(lookDirection, monsterDirection, Vector3.up)
+                : 0f;
+            stunTurnProgress = 0f;
+        }
         hasLeftHandStartPosition = TryGetHandPosition(XRNode.LeftHand, out leftHandStartPosition);
         hasRightHandStartPosition = TryGetHandPosition(XRNode.RightHand, out rightHandStartPosition);
         StopHunt();
